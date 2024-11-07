@@ -1,0 +1,72 @@
+// List all databases available on the MongoDB server
+show dbs;
+
+// Switch to the 'bill' database (it will be created if it doesn't exist)
+use bill;
+
+// Insert sample documents into the 'pay' collection in the 'bill' database
+db.pay.insert({Cust_ID:"A123", Product:"Milk", Amount:40, Status:"P"});
+db.pay.insert({Cust_ID:"A123", Product:"Parle_G", Amount:50, Status:"NP"});
+db.pay.insert({Cust_ID:"A123", Product:"Lays Chips", Amount:40, Status:"P"});
+db.pay.insert({Cust_ID:"B123", Product:"Mentos", Amount:10, Status:"P"});
+db.pay.insert({Cust_ID:"B123", Product:"Maggie", Amount:60, Status:"NP"});
+
+// Query the 'pay' collection to view all documents
+db.pay.find();
+
+// Perform a MapReduce operation to calculate the total unpaid amount per customer (Status: "NP")
+// Mapper function: Emits the 'Cust_ID' and 'Amount' for each document
+// Reducer function: Sums the 'Amount' values for each customer
+// The result is stored in a collection called 'Bill_Amount'
+db.pay.mapReduce(
+  function() { 
+    emit(this.Cust_ID, this.Amount); // Emit Cust_ID and Amount for each document
+  },
+  function(key, values) { 
+    return Array.sum(values); // Sum the Amount values for each Cust_ID
+  },
+  {
+    query: {"Status": "NP"}, // Filter documents where Status is 'NP' (Not Paid)
+    out: "Bill_Amount"       // Store the result in the 'Bill_Amount' collection
+  }
+);
+
+// Declare a Map function to emit the 'Cust_ID' and 'Amount' for each document
+var mapFunc1 = function() {
+  emit(this.Cust_ID, this.Amount);
+};
+
+// Declare a Reduce function to sum the 'Amount' values for each 'Cust_ID'
+var reduceFunc1 = function(keyCustID, valuePrices) {
+  return Array.sum(valuePrices);
+};
+
+// Perform a second MapReduce operation using the declared mapFunc1 and reduceFunc1
+// This operation calculates the total amount spent by each customer (irrespective of 'Status')
+// The result is stored in a collection called 'Map'
+db.pay.mapReduce(mapFunc1, reduceFunc1, {out: "Map"});
+
+// Query the 'Bill_Amount' collection to see the result of the first MapReduce operation
+db.Bill_Amount.find();
+
+// Query the 'Map' collection to see the result of the second MapReduce operation
+db.Map.find();
+
+
+
+
+
+show dbs
+use bill
+db.pay.insert({Cust_ID:"A123",Product:"Milk",Amount:40,Status:"P"});
+db.pay.insert({Cust_ID:"A123",Product:"Parle_G",Amount:50,Status:"NP"});
+db.pay.insert({Cust_ID:"A123",Product:"Lays Chips",Amount:40,Status:"P"});
+db.pay.insert({Cust_ID:"B123",Product:"Mentos",Amount:10,Status:"P"});
+db.pay.insert({Cust_ID:"B123",Product:"Maggie",Amount:60,Status:"NP"});
+db.pay.find()
+db.pay.mapReduce(function(){emit(this.Cust_ID,this.Amount);},function(key,values){return Array.sum(values)},{query:{"Status":"NP"},out:"Bill_Amount"})
+var mapFunc1=function(){emit(this.Cust_ID,this.Amount);};
+var reduceFunc1=function(keyCustID,valuePrices){return Array.sum(valuePrices);};
+db.pay.mapReduce(mapFunc1,reduceFunc1,{out:"Map"})
+db.Bill_Amount.find()
+db.Map.find()

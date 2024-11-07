@@ -1,0 +1,147 @@
+Part a: Design and Develop SQL DDL Statements
+Below is the SQL DDL (Data Definition Language) for demonstrating the use of SQL objects such as Table, View, Index, Sequence, Synonym, and different constraints on the given Departments and Employees tables.
+
+1. Create the Departments Table
+sql
+Copy code
+CREATE TABLE Departments (
+    dept_id INT PRIMARY KEY,               -- Primary key constraint
+    dept_name VARCHAR(100) NOT NULL,        -- Not null constraint
+    location VARCHAR(100)                  -- Location can be null
+);
+2. Create the Employees Table
+sql
+Copy code
+CREATE TABLE Employees (
+    emp_id INT PRIMARY KEY,                 -- Primary key constraint
+    emp_name VARCHAR(100) NOT NULL,          -- Not null constraint
+    emp_salary DECIMAL(10, 2) CHECK (emp_salary > 0),  -- Check constraint to ensure salary is positive
+    hire_date DATE DEFAULT CURRENT_DATE,     -- Default constraint to set the current date
+    dept_id INT,                             -- Foreign key to departments table
+    CONSTRAINT fk_dept FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)  -- Foreign key constraint
+);
+3. Create a View
+A view that combines data from both Employees and Departments, showing employee details along with department names.
+
+sql
+Copy code
+CREATE VIEW EmployeeDepartmentView AS
+SELECT e.emp_id, e.emp_name, e.emp_salary, e.hire_date, d.dept_name, d.location
+FROM Employees e
+JOIN Departments d ON e.dept_id = d.dept_id;
+4. Create an Index on emp_name
+Creating an index on emp_name in the Employees table to improve search performance for employee names.
+
+sql
+Copy code
+CREATE INDEX idx_emp_name ON Employees (emp_name);
+5. Create a Sequence for Generating Employee IDs
+In MySQL, sequences are not directly supported as they are in other databases like Oracle. However, auto-incrementing columns serve the same purpose. For demonstration, we can simulate a sequence by setting an AUTO_INCREMENT property on the emp_id.
+
+sql
+Copy code
+-- Altering emp_id to AUTO_INCREMENT to simulate a sequence.
+ALTER TABLE Employees MODIFY emp_id INT AUTO_INCREMENT;
+6. Create a Synonym (Optional)
+In MySQL, Synonyms are not directly supported. However, we can create aliases for objects using views or other techniques. But for illustrative purposes, here's how we could "simulate" a synonym:
+
+sql
+Copy code
+-- Create a view that acts as a synonym for the Departments table.
+CREATE VIEW Dept AS SELECT * FROM Departments;
+Part b: Write 10 SQL Queries Using DML Statements
+Here are 10 SQL queries using SQL DML (Data Manipulation Language) on the given Departments and Employees tables.
+
+1. Insert a New Department
+Insert a new department record into the Departments table.
+
+sql
+Copy code
+INSERT INTO Departments (dept_id, dept_name, location)
+VALUES (5, 'Finance', 'London');
+2. Insert Multiple Employee Records
+Insert multiple records into the Employees table.
+
+sql
+Copy code
+INSERT INTO Employees (emp_id, emp_name, emp_salary, dept_id, hire_date)
+VALUES
+(7, 'Grace', 70000.00, 3, '2023-02-15'),
+(8, 'Hannah', 65000.00, 4, '2022-11-08');
+3. Update an Employee's Salary
+Update the salary of employee emp_id = 3 (Charlie).
+
+sql
+Copy code
+UPDATE Employees
+SET emp_salary = 80000.00
+WHERE emp_id = 3;
+4. Update a Department Location
+Update the location of the department with dept_id = 2 (Sales) to 'Los Angeles'.
+
+sql
+Copy code
+UPDATE Departments
+SET location = 'Los Angeles'
+WHERE dept_id = 2;
+5. Delete an Employee Record
+Delete the employee with emp_id = 6 (Frank).
+
+sql
+Copy code
+DELETE FROM Employees
+WHERE emp_id = 6;
+6. Retrieve All Employees with Their Department Name
+Use a join to retrieve employee details along with their department name.
+
+sql
+Copy code
+SELECT e.emp_id, e.emp_name, e.emp_salary, e.hire_date, d.dept_name
+FROM Employees e
+JOIN Departments d ON e.dept_id = d.dept_id;
+7. Retrieve Employees with Salary Greater Than a Specified Amount
+Retrieve all employees who earn more than 60,000.
+
+sql
+Copy code
+SELECT emp_id, emp_name, emp_salary
+FROM Employees
+WHERE emp_salary > 60000;
+8. Count the Number of Employees in Each Department
+Use GROUP BY and COUNT to find out how many employees are in each department.
+
+sql
+Copy code
+SELECT d.dept_name, COUNT(e.emp_id) AS num_employees
+FROM Departments d
+LEFT JOIN Employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name;
+9. Find the Highest Paid Employee in Each Department
+Find the highest-paid employee in each department.
+
+sql
+Copy code
+SELECT e.dept_id, e.emp_name, e.emp_salary
+FROM Employees e
+WHERE e.emp_salary = (
+    SELECT MAX(emp_salary)
+    FROM Employees
+    WHERE dept_id = e.dept_id
+);
+10. Retrieve Employee Details with Department Location Using a View
+Assuming the EmployeeDepartmentView was created earlier, this query retrieves employee details along with their department location.
+
+sql
+Copy code
+SELECT * FROM EmployeeDepartmentView;
+Explanation:
+Inserts: Queries to add new data to both Departments and Employees.
+Updates: Modifies existing records in the tables (Employees and Departments).
+Deletes: Removes records from the Employees table.
+Select Queries:
+Joins Employees and Departments to get detailed employee information.
+Filters employees based on their salary.
+Groups employees by department and counts them.
+Aggregate Functions: COUNT() to find the number of employees in each department, and MAX() to find the highest-paid employee per department.
+View: A view (EmployeeDepartmentView) combines employee and department details for easy querying.
+Let me know if you need any further explanations or modifications to these queries!

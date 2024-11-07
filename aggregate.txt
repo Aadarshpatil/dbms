@@ -1,0 +1,168 @@
+This MongoDB code snippet consists of multiple operations and queries related to a collection called cust_table in a database named customer. I'll break it down step by step:
+
+1. show dbs
+This command lists all the databases available in the MongoDB server.
+
+2. use customer
+This command switches to the customer database. If the customer database does not already exist, it will be created when you insert data into it.
+
+3. db.cust_table.insert(...) (Multiple insert operations)
+These commands insert documents (records) into the cust_table collection within the customer database:
+
+javascript
+Copy code
+db.cust_table.insert({Item_id:1,Cust_Name:"Ram",Product:"Milk",Amount:40});
+db.cust_table.insert({Item_id:2,Cust_Name:"Ram",Product:"Parle_G",Amount:50});
+db.cust_table.insert({Item_id:3,Cust_Name:"Mohan",Product:"Lays Chips",Amount:40});
+db.cust_table.insert({Item_id:4,Cust_Name:"Shivam",Product:"Mentos",Amount:10});
+db.cust_table.insert({Item_id:5,Cust_Name:"Mohan",Product:"Maggie",Amount:60});
+These insert statements add five documents to the cust_table collection. Each document represents a customer’s purchase, containing:
+Item_id: A unique identifier for the item.
+Cust_Name: The name of the customer.
+Product: The name of the product.
+Amount: The price of the product.
+4. db.cust_table.aggregate({...}) (Aggregation queries)
+These are aggregation queries to perform various operations on the cust_table collection:
+
+Total Sum by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$sum:"$Amount"}}});
+This groups the documents by Cust_Name and calculates the total ($sum) of the Amount for each customer.
+
+Average Amount by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$avg:"$Amount"}}});
+This groups by Cust_Name and calculates the average ($avg) of the Amount for each customer.
+
+Minimum Amount by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$min:"$Amount"}}});
+This groups by Cust_Name and finds the minimum ($min) Amount for each customer.
+
+Maximum Amount by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$max:"$Amount"}}});
+This groups by Cust_Name and finds the maximum ($max) Amount for each customer.
+
+First Amount by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$first:"$Amount"}}});
+This groups by Cust_Name and retrieves the first ($first) Amount value from each group.
+
+Last Amount by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$last:"$Amount"}}});
+This groups by Cust_Name and retrieves the last ($last) Amount value from each group.
+
+Push Amounts into an Array:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$push:"$Amount"}}});
+This groups by Cust_Name and creates an array of all Amount values ($push) for each customer.
+
+Count of Purchases per Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$sum:1}}});
+This groups by Cust_Name and counts the number of records (purchases) for each customer by summing 1 for each document.
+
+Unique Amounts by Customer:
+
+javascript
+Copy code
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$addToSet:"$Amount"}}});
+This groups by Cust_Name and returns a set of unique Amount values for each customer ($addToSet ensures there are no duplicates).
+
+5. db.cust_table.createIndex(...) (Index creation)
+These commands create indexes on the Item_id field to improve query performance.
+
+Create an Index on Item_id (ascending):
+
+javascript
+Copy code
+db.cust_table.createIndex({'Item_id':1});
+Creates an ascending index (1 indicates ascending order) on the Item_id field. Indexes speed up queries that search on the indexed field.
+
+Create another Index on Item_id with a different order:
+
+javascript
+Copy code
+db.cust_table.createIndex({'Item_id':2});
+This seems to be an error or typo, as Item_id: 2 does not represent a valid index order (should be 1 for ascending or -1 for descending). If this was intended to create another index, the correct syntax should be db.cust_table.createIndex({'Item_id': 1}) or db.cust_table.createIndex({'Item_id': -1}).
+
+Create an Index on Item_id (ascending again):
+
+javascript
+Copy code
+db.cust_table.createIndex({'Item_id':4});
+Similar to the previous indexes, creating an ascending index on the Item_id field.
+
+6. db.cust_table.getIndexes()
+This command lists all the indexes currently available on the cust_table collection.
+
+7. db.cust_table.dropIndex(...) (Dropping indexes)
+Drop Index on Item_id:4:
+
+javascript
+Copy code
+db.cust_table.dropIndex({'Item_id':4});
+This drops the index created on the Item_id field with the value 4 (ascending order).
+
+Drop Index on Item_id:1:
+
+javascript
+Copy code
+db.cust_table.dropIndex({'Item_id':1});
+This drops the index created on the Item_id field with the value 1 (ascending order).
+
+8. db.cust_table.getIndexes()
+This command is repeated to verify the current list of indexes after the previous drop commands have been executed.
+
+9. db.cust_table.getIndexes() (Final check)
+This final command checks the indexes again to ensure that the drop operations were successful.
+
+Summary of Key Points:
+Insert Operations: Multiple customer purchases are inserted into the cust_table collection.
+Aggregation Operations: Various aggregation queries are run to calculate totals, averages, counts, and other statistical operations on the Amount field grouped by Cust_Name.
+Indexing: Indexes are created on the Item_id field to optimize query performance, though one of the index creation commands seems erroneous (Item_id: 2).
+Index Removal: The created indexes on Item_id are removed using the dropIndex method.
+
+
+show dbs
+use customer
+db.cust_table.insert({Item_id:1,Cust_Name:"Ram",Product:"Milk",Amount:40});
+db.cust_table.insert({Item_id:2,Cust_Name:"Ram",Product:"Parle_G",Amount:50});
+db.cust_table.insert({Item_id:3,Cust_Name:"Mohan",Product:"Lays Chips",Amount:40});
+db.cust_table.insert({Item_id:4,Cust_Name:"Shivam",Product:"Mentos",Amount:10});
+db.cust_table.insert({Item_id:5,Cust_Name:"Mohan",Product:"Maggie",Amount:60});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$sum:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$avg:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$min:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$max:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$first:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$last:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$psuh:"$Amount"}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$sum:1}}});
+db.cust_table.aggregate({$group:{_id:"$Cust_Name","total":{$addToSet:"$Amount"}}});
+db.cust_table.createIndex({'Item_id':1})
+db.cust_table.createIndex({'Item_id':2})
+db.cust_table.createIndex({'Item_id':4})
+db.cust_table.getIndexes()
+db.cust_table.dropIndex({'Item_id':4})
+db.cust_table.dropIndex({'Item_id':1})
+db.cust_table.getIndexes()
+db.cust_table.getIndexes()

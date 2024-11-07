@@ -1,0 +1,7 @@
+create or replace trigger libtrig
+before delete or update on library
+REFERENCING old as o new as n
+for each row
+begin
+insert into library_main values (:o.name, :o.rollno, :o.status);
+end;
